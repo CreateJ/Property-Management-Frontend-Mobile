@@ -1,14 +1,23 @@
 import dva from 'dva';
+
+// 引入antd-mobile样式文件
+import 'antd/dist/antd.css';
+import 'antd-mobile/dist/antd-mobile.less'
 import './index.css';
 
 // 1. Initialize
-const app = dva();
+import {createBrowserHistory as createHistory} from 'history';
+const app = dva({
+  history: createHistory(),
+});
+// const app = dva();
 
 // 2. Plugins
 // app.use({});
 
 // 3. Model
-// app.model(require('./models/example').default);
+app.model(require('./models/user').default)
+// ;
 
 // 4. Router
 app.router(require('./router').default);
