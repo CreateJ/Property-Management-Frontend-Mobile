@@ -1,83 +1,76 @@
 import React, {useState} from 'react'
+import styles from "../login.less";
+import {Flex, Toast} from "antd-mobile";
 import {routerRedux} from "dva/router";
 import {connect} from "dva";
-import {Flex, Toast} from "antd-mobile";
-import styles from './login.less'
-import cookieUtil from '@/utils/cookie'
-import {login} from "../../services/login";
+import {resetPassword} from "../../../services/user";
 
-const Login = (props) => {
-  const [id, setId] = useState('')
-  const [pw, setPw] = useState('')
+const Reset = (props) => {
+  const [phone,setPhone] = useState('');
+  const [idCode, setIdCode] = useState('');
   const [ut, setUt] = useState('')
-  const utMap = ['','住户','员工']
 
-  const handleSubmit = async (e) => {
+  const clickRadio = e => {
+    setUt(e.target.value)
+  }
+
+  const handleSubmit = async(e) => {
     e.preventDefault()
-    if (id === '') {
-      Toast.fail('请输入账号', 1)
+    if (phone === '') {
+      Toast.fail('请输入手机号', 1)
       return
     }
-    if (pw === '') {
-      Toast.fail('请输入密码', 1)
+    if (idCode === '') {
+      Toast.fail('请输入身份证', 1)
       return
     }
     if (ut === '') {
       Toast.fail('请选择登录身份', 1)
       return
     }
-    const params = {phone: id,password: pw,user_type: parseInt(ut, 0)}
-    const success = await login(params)
-    if(success.code === 200){
-      Toast.success(`登录成功,当前身份为${utMap[ut]}`,1,()=>{
-        cookieUtil.setCookie('userType',ut);
-        // 同步到redux中
-        props.dispatch({type:'user/setUserType', userType: ut})
-        props.dispatch({type:'user/setIsLogin', isLogin: true})
-        props.dispatch(routerRedux.push('/welcome'))
+    const params = {phone: phone, id_code: idCode, user_type: parseInt(ut, 0)}
+    console.log(params)
+    const success = await resetPassword(params);
+    console.log(success, 'resetPassword');
+    if(success.code === 200) {
+      Toast.success('重置密码成功，即将返回登录页，请使用初始密码登录！',2,()=>{
+        returnToLogin()
       })
-    }else{
-      Toast.fail('登录失败，请检查账号密码是否正确')
+    }else {
+      Toast.fail('手机号和身份证号不对应哦，请重新检查',2)
+      return
     }
   }
-
-  const clickRadio = e => {
-    setUt(e.target.value)
+  const returnToLogin = () => {
+    props.dispatch(routerRedux.push('/login'))
   }
-
-  const handleReset = () => {
-    props.dispatch(routerRedux.push('/reset'))
-  }
-
-
-
   return (
     <Flex direction='column' className={styles.loginContainer}>
       <Flex.Item className={styles.item}>
-        <div className={styles.title}>智慧物业服务</div>
+        <div className={styles.title}>重置密码</div>
       </Flex.Item>
       <Flex.Item className={styles.item}>
         <form onSubmit={e => handleSubmit(e)} className={styles.loginForm} name='login'>
           {/*<label>账号:</label>*/}
           <input
             type="text"
-            value={id}
+            value={phone}
             onChange={(e) => {
-              setId(e.target.value)
+              setPhone(e.target.value)
             }}
             className={styles.text}
-            placeholder='账号'
+            placeholder='手机号'
           />
           <br/>
           {/*<label>密码:</label>*/}
           <input
             type="text"
-            value={pw}
+            value={idCode}
             onChange={(e) => {
-              setPw(e.target.value)
+              setIdCode(e.target.value)
             }}
             className={styles.text}
-            placeholder='密码'
+            placeholder='身份证号码'
           />
           <br/>
           <span>登录类型: </span>
@@ -102,10 +95,10 @@ const Login = (props) => {
           <br/>
           <Flex>
             <Flex.Item>
-              <input type="submit" className={styles.loginBtn} value='登录'/>
+              <input type="button" onClick={returnToLogin} className={styles.loginBtn} value='返回登录页'/>
             </Flex.Item>
             <Flex.Item>
-              <input type="button" className={styles.loginBtn} onClick={handleReset} value='重置密码'/>
+              <input type="submit" className={styles.loginBtn} value='提交'/>
             </Flex.Item>
           </Flex>
         </form>
@@ -116,4 +109,4 @@ const Login = (props) => {
   )
 }
 
-export default connect()(Login);
+export default connect()(Reset)

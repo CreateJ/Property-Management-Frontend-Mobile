@@ -17,12 +17,13 @@ const TabBarCom = (props) => {
       key: 'welcome',
       Url: require('../../assets/tabBar/home.svg'),
       selectedUrl: require('../../assets/tabBar/home_.svg'),
-    },{
-      title: '消息',
-      key: 'message',
-      Url: require('../../assets/tabBar/message.svg'),
-      selectedUrl: require('../../assets/tabBar/message_.svg'),
     },
+    // {
+    //   title: '消息',
+    //   key: 'message',
+    //   Url: require('../../assets/tabBar/message.svg'),
+    //   selectedUrl: require('../../assets/tabBar/message_.svg'),
+    // },
     {
       title: '服务',
       key: 'server',

@@ -12,18 +12,28 @@ import TabBarCom from '@/components/tabBar/index'
 import ServerItemInfo from "@/routes/server/components/serverItemInfo";
 import Login from '../login'
 import Problem from "../problem";
-import cookieUtil from '@/utils/cookie'
+import Cookies from 'js-cookie'
+import CheckIn from "../checkIn";
+import Reset from "../login/reset";
+import ChangeStage from '../server/pages/changeStage'
+import GrabOrder from '../grabOrder'
 
 
 function Index(props) {
-  useEffect(()=>{
-    let token = cookieUtil.getCookie("token");
-    let userType = cookieUtil.getCookie("userType");
+  useEffect( () => {
+    const { get } = Cookies
+    const token = get('token')
+    const userType = parseInt(get('userType'), 0)
     // 同步到redux中
-    if(token !== '' && userType !==''){
-      props.dispatch({type:'user/setUserType', userType: userType})
-      props.dispatch({type:'user/setIsLogin', isLogin: true})
-      props.dispatch(routerRedux.push('/welcome'))
+    if(token){
+      props.dispatch({type: 'user/updateUserData'}).then(res=>{
+        console.log('登录成功', 'index')
+        props.dispatch({type:'user/setUserType', userType: userType})
+        props.dispatch({type:'user/setIsLogin', isLogin: true})
+        props.dispatch(routerRedux.push('/welcome'))
+      }).catch(err=>{
+        props.dispatch(routerRedux.push('/login'))
+      })
     }else {
       props.dispatch(routerRedux.push('/login'))
     }
@@ -40,6 +50,10 @@ function Index(props) {
         <Route path='/publish/:emergency' exact component={PublishOrder} history={props.history}></Route>
         <Route path='/login' exact component={Login} history={props.history}></Route>
         <Route path='/problem' exact component={Problem} history={props.history}></Route>
+        <Route path='/checkIn' exact component={CheckIn} history={props.history}></Route>
+        <Route path='/reset' exact component={Reset} history={props.history}></Route>
+        <Route path='/change/:orderId/:nextStage' exact component={ChangeStage} history={props.history}></Route>
+        <Route path='/grabOrder' exact component={GrabOrder} history={props.history}></Route>
       </Switch>
       <TabBarCom history={props.history}></TabBarCom>
     </div>

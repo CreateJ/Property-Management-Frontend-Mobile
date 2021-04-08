@@ -8,8 +8,8 @@ const Processing = (props) => {
   return (
     <div className={styles.serverSubPage}>
       {
-        props.ordreList && props.ordreList.map((item) => {
-          return (<ServerItem key={item.id} item={item}/>)
+        props.ordreList && props.ordreList.map((item, index) => {
+          return (<ServerItem key={item.id} item={item} index={index}/>)
         })
       }
     </div>

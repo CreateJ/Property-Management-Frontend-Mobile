@@ -3,13 +3,13 @@ const household = {
     {
       key: 'publishOrder',
       appName: '发布工单',
-      route: '/publish/0',
+      route: '/publish/1',
       url: require('../assets/appList/全部.png'),
     },
     {
       key: 'urgentOrder',
       appName: '紧急工单',
-      route: '/publish/1',
+      route: '/publish/2',
       url: require('../assets/appList/积分.png'),
     },
     {

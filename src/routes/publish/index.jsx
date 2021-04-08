@@ -1,50 +1,56 @@
 import React, {useEffect, useState} from 'react'
-import {Link, routerRedux} from "dva/router";
 import {connect} from "dva";
-import {List, Picker, TextareaItem, WingBlank} from "antd-mobile";
+import {List, Picker, TextareaItem, Toast, WingBlank} from "antd-mobile";
 import styles from './publish.less'
 import {createForm} from 'rc-form';
-import arrayTreeFilter from 'array-tree-filter';
 import serverTypeList from "@/Map/serverTypeMap";
+import {createOrder} from "../../services/order";
 
 const PublishOrder = (props) => {
-  const [emergency, setEmergency] = useState('0');
+  const [emergency, setEmergency] = useState('1');
   const [houseList, setHouseList] = useState([{value: '101101'}]);
   useEffect(() => {
+    console.log(props)
     const pathname = props.history.location.pathname;
     const isEmergency = pathname.split('/')[pathname.split('/').length - 1]
-    if (isEmergency === '0') {
+    if (isEmergency === '1') {
       console.log('正在填写普通工单')
     } else {
       console.log('正在填写紧急工单')
     }
     setEmergency(isEmergency)
 
-    const temp_houseList = [];
     // 获取住户所拥有的住宅
-    ['101101', '101102'].map((item) => {
+    const temp_houseList = props.userData.house_id.map((item) => {
       let tmp = {label: `${item[0]}单元${item[1] + item[2]}栋${item[3] + item[4] + item[5]}号`, value: item}
-      temp_houseList.push(tmp);
+      return tmp
     })
     // 填充到list中
     setHouseList(temp_houseList)
-
-    console.log(props, 'publishPage')
   }, [])
 
-  const publishOrder = () => {
-
-
-    props.form.validateFields((error, values) => {
+  const publishOrder = async () => {
+    let params = {};
+    props.form.validateFields(async (error, values) => {
       if (!error) {
-        console.log('ok', values);
+        params.type = values.serverType[1];
+        params.house_id = parseInt(values.house_id[0], 0);
+        params.emergency = parseInt(emergency, 0);
+        params.note = values.note
+        // 这里要添加任务的level，通过map映射获取
+        console.log(params, '发布工单的参数')
+        const success = await createOrder(params);
+        console.log(success)
+        if(success.code === 200){
+          Toast.success('发布工单成功，即将返回首页，您可以在服务页看到您发布的工单')
+        }else {
+          Toast.fail('发布失败，暂未匹配到员工！',1)
+        }
       } else {
         console.log('error', error, values);
+        Toast.fail('发布失败，暂未匹配到员工！',1)
       }
     });
-
-    // 在这里发送请求
-    props.dispatch(routerRedux.push('/welcome'))
   }
 
   const {getFieldProps} = props.form;
@@ -65,7 +71,7 @@ const PublishOrder = (props) => {
             data={houseList}
             cols={1}
             title="请选择住宅"
-            {...getFieldProps('householdId', {
+            {...getFieldProps('house_id', {
               initialValue: [houseList[0].value],
             })}
             onOk={e => console.log('ok', e)}
@@ -92,9 +98,7 @@ const PublishOrder = (props) => {
             title={'备注'}
             rows={5}
             count={100}
-            onBlur={(e) => {
-              console.log(e)
-            }}
+            onBlur={(e) => {}}
           />
         </List>
         <div className={styles.btnBox}>
@@ -106,4 +110,10 @@ const PublishOrder = (props) => {
 }
 const componentConnectForm = createForm()(PublishOrder)
 
-export default connect()(componentConnectForm);
+const stateMapToProps = (state) => {
+  return {
+    userData: state.user.userData,
+  }
+}
+
+export default connect(stateMapToProps)(componentConnectForm);

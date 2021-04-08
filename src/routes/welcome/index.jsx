@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {routerRedux} from "dva/router";
 import {connect} from 'dva'
 import styles from './welcome.less'
@@ -7,15 +7,18 @@ import household from "@/Map/householdMap";
 import employee from "@/Map/employeeMap";
 
 const Welcome = (props) => {
+  useEffect(()=>{
+    props.dispatch({type:'user/updateUserData'})
+  },[])
 
   const clickApp = (item) => {
     props.dispatch(routerRedux.push(item.route))
   }
   // 通过输入的字符串返回同名对象
-  const getAppslist = (str) => {
-    switch(str){
-      case 'household':return household;
-      case 'employee':return employee;
+  const getAppList = (ut) => {
+    switch(ut){
+      case 1 : return household;
+      case 2 : return employee;
       default: return household;
     }
 
@@ -25,11 +28,11 @@ const Welcome = (props) => {
     <div style={{height: "100%"}}>
       <div className={styles.banner}>欢迎使用</div>
       <div style={{padding: '0.5rem 0.5rem'}}>
-        <Flex>
+        <Flex className={styles.btnGroup}>
           {
             // 通过model user获取到当前系统员工登录还是住户登录
             // 通过映射表获取不同的应用列表，进行渲染
-            props.userType && getAppslist(props.userType).appsList.map((item) => {
+            props.userType && getAppList(props.userType).appsList.map((item) => {
               return (
                 <Flex.Item key={item.key} onClick={() => {
                   clickApp(item)
@@ -53,9 +56,7 @@ const Welcome = (props) => {
 }
 const mapStateToProps = (state) => {
   return {
-    userType: state.user.userType
+    userType: state.user.userData.user_type
   }
 }
-
-// export default connect(mapStateToProps)(Welcome);
 export default connect(mapStateToProps)(Welcome);

@@ -14,7 +14,7 @@ export default {
   effects: {},
 
   reducers: {
-    setCurrentServer(state, payload) {
+    setCurrentServer(state, {payload}) {
       const _state = JSON.parse(JSON.stringify(state))
       _state.currentServer = payload.data;
       return _state
