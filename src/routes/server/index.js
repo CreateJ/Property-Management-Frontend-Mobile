@@ -12,7 +12,6 @@ const Server = (props) => {
   const [completedList, setCompletedList] = useState([])
   useEffect(() => {
     console.log('useEffect','serverPage')
-    // console.log(props,'server props')
     initData().catch(err=>{
       console.log(err)
     })

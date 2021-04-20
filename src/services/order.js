@@ -37,3 +37,11 @@ export function grabEmergencyOrder(params){
     data: {note:note}
   })
 }
+
+
+export function evaluation(params){
+  return request(`/order/evaluation/${params.order_id}`, {
+    method: 'POST',
+    data: params
+  })
+}

@@ -36,6 +36,7 @@ export const houseTransToFrontend = (id) => {
 }
 
 export const typeTransToFrontend = (type) => {
+  if(!type) return null
   type = type+''
   const type_tmp = parseInt(type.slice(0,1), 0)
   const subType_tmp = parseInt(type.slice(2,4), 0)

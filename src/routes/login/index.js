@@ -71,7 +71,7 @@ const Login = (props) => {
           <br/>
           {/*<label>密码:</label>*/}
           <input
-            type="text"
+            type="password"
             value={pw}
             onChange={(e) => {
               setPw(e.target.value)

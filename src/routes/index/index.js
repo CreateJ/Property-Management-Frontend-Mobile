@@ -16,6 +16,7 @@ import Cookies from 'js-cookie'
 import CheckIn from "../checkIn";
 import Reset from "../login/reset";
 import ChangeStage from '../server/pages/changeStage'
+import Evaluation from '../server/pages/evaluation'
 import GrabOrder from '../grabOrder'
 
 
@@ -53,6 +54,7 @@ function Index(props) {
         <Route path='/checkIn' exact component={CheckIn} history={props.history}></Route>
         <Route path='/reset' exact component={Reset} history={props.history}></Route>
         <Route path='/change/:orderId/:nextStage' exact component={ChangeStage} history={props.history}></Route>
+        <Route path='/evaluation/:orderId' exact component={Evaluation} history={props.history}></Route>
         <Route path='/grabOrder' exact component={GrabOrder} history={props.history}></Route>
       </Switch>
       <TabBarCom history={props.history}></TabBarCom>

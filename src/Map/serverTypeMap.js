@@ -70,6 +70,28 @@ const serverType = [
     ],
   },
   {
+    label: '排污',
+    value: '4',
+    children: [
+      {
+        label: '洗手盆下水管漏水',
+        value: '4-01',
+      },
+      {
+        label: '排水管漏水',
+        value: '4-02',
+      },
+      {
+        label: '厕所堵塞',
+        value: '4-03',
+      },
+      {
+        label: '其他',
+        value: '4-04',
+      },
+    ],
+  },
+  {
     label: '设备',
     value: '5',
     children: [
@@ -145,16 +167,6 @@ const serverType = [
         label: '其他',
         value: '7-05',
       },
-    ],
-  },
-  {
-    label: '其他',
-    value: '8',
-    children: [
-      {
-        label: '其他',
-        value: '8-01',
-      }
     ],
   },
 ]

@@ -35,5 +35,19 @@
     "husky": "^0.12.0",
     "redbox-react": "^1.4.3",
     "roadhog": "^2.5.0-beta.4"
-  }
+  },
+  "name": "property-management-frontend-mobile",
+  "version": "1.0.0",
+  "main": ".roadhogrc.mock.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CreateJ/Property-Management-Frontend-Mobile.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CreateJ/Property-Management-Frontend-Mobile/issues"
+  },
+  "homepage": ".",
+  "description": ""
 }

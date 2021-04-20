@@ -5,7 +5,7 @@ import styles from './welcome.less'
 import {Flex} from "antd-mobile";
 import household from "@/Map/householdMap";
 import employee from "@/Map/employeeMap";
-
+import Banner from "@/routes/welcome/components/banner"
 const Welcome = (props) => {
   useEffect(()=>{
     props.dispatch({type:'user/updateUserData'})
@@ -26,7 +26,9 @@ const Welcome = (props) => {
 
   return (
     <div style={{height: "100%"}}>
-      <div className={styles.banner}>欢迎使用</div>
+      <div className={styles.banner}>
+        <Banner></Banner>
+      </div>
       <div style={{padding: '0.5rem 0.5rem'}}>
         <Flex className={styles.btnGroup}>
           {

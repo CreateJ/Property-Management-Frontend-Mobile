@@ -5,6 +5,7 @@ import styles from './publish.less'
 import {createForm} from 'rc-form';
 import serverTypeList from "@/Map/serverTypeMap";
 import {createOrder} from "../../services/order";
+import {routerRedux} from "dva/router";
 
 const PublishOrder = (props) => {
   const [emergency, setEmergency] = useState('1');
@@ -42,7 +43,9 @@ const PublishOrder = (props) => {
         const success = await createOrder(params);
         console.log(success)
         if(success.code === 200){
-          Toast.success('发布工单成功，即将返回首页，您可以在服务页看到您发布的工单')
+          Toast.success('发布工单成功，即将返回首页，您可以在服务页看到您发布的工单',2,()=>{
+            props.dispatch(routerRedux.push('/welcome'))
+          })
         }else {
           Toast.fail('发布失败，暂未匹配到员工！',1)
         }

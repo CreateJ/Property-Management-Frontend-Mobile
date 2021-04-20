@@ -56,7 +56,7 @@ const OrderItem = (props) => {
               <div>备注：{order.order_stage[order.order_stage.length-1].note}</div>
             </div>
             <div className={styles.btnBox}>
-              <button onClick={()=>grab(order.id)} className={styles.btn}>抢订单</button>
+              <button onClick={()=>grab(order.id)} className={styles.btn}>抢工单</button>
             </div>
           </>
         )

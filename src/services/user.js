@@ -23,3 +23,11 @@ export const resetPassword = (params) => {
     data: params,
   })
 }
+
+
+export const feedBack = (params) => {
+  return request('/feedback/create', {
+    method: 'POST',
+    data: params
+  })
+}

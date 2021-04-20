@@ -1,71 +1,112 @@
 import React, {useEffect, useState} from 'react'
 import {connect} from "dva";
 import styles from '../server.less'
-import {getOrderInfo} from "../../../services/order";
 import {routerRedux} from "dva/router";
-import {timeTransToFrontend} from "../../../utils/transformUtils";
+import {timeTransToFrontend, typeTransToFrontend} from "../../../utils/transformUtils";
+import {Button, Steps, WhiteSpace} from "antd-mobile";
+import {getSteps} from "../../../Map/stepsMap";
+
+const Step = Steps.Step;
 
 const ServerItemInfo = (props) => {
+
+  const {currentOrder} = props;
+  const {order_stage} = currentOrder;
   const [nowStage, setNowStage] = useState(1);
-  const [stageData, setStageData] = useState([]);
-  const [order, setOrder] = useState({});
+  const [steps, setSteps] = useState([])
+  const [stepsCurrent, setStepsCurrent] = useState(0);
   const [showBtnGroup, setShowBtnGroup] = useState(false);
 
   // 初始化信息，只执行一次
   useEffect(() => {
     let pathname_temp = props.location.pathname.split('/')[2]
     console.log(`正在对id为${pathname_temp}的工单进行查询`)
-    // 获取路由中的工单id
-    // 初始化数据
-    getOrderInfo(pathname_temp).then(res => {
-      setOrder(res.data.order)
-      const stageList = res.data.order.order_stage
-      setStageData(stageList.reverse())
-      setNowStage(res.data.order.stage)
-    }).catch(err=>{
-      console.log(err)
-    })
+    props.dispatch({type: 'order/updateCurrentOrder', payload: {order_id: pathname_temp}})
   }, [])
 
-  //后面的参数代表了，什么参数变化了需要执行这个effect
+  // 让程序自动运行即可
   useEffect(() => {
-    // 在这里对stageData进行请求
-    // 在这里使用setStageData进行更新
+    setNowStage(currentOrder.stage)
     setShowBtnGroup(shouldShowBtnGroup(props.userType, nowStage))
   })
 
+  useEffect(() => {
+    if (currentOrder.stage) {
+      setSteps(getSteps(currentOrder.stage))
+    }
+  }, [currentOrder])
+
+  useEffect(()=>{
+    if (steps.length > 0) {
+      for (let i = 0; i < 3; i++) {
+        if (steps[i].id === currentOrder.stage) {
+          setStepsCurrent(i);
+          console.log(i, 'iiiiiiiiiiiiiiiiiiiiiiii')
+        }
+      }
+    }
+  },[steps])
+
   // 这里会对跳转进行处理
   const writeNextStage = (stage) => {
-    props.dispatch(routerRedux.push(`/change/${order.id}/${stage}`));
+    props.dispatch(routerRedux.push(`/change/${currentOrder.id}/${stage}`));
+  }
+
+  const evaluation = () => {
+    props.dispatch(routerRedux.push(`/evaluation/${currentOrder.id}`));
   }
 
   const stateToComponent = {
     1: {
       name: '已发布',
       buttons: (<>
-        <button onClick={()=>{writeNextStage(2)}} className={styles.processBtn}>确认信息</button>
+        <button onClick={() => {
+          writeNextStage(2)
+        }} className={styles.processBtn}>确认信息
+        </button>
       </>)
     },
     2: {
       name: '已确认',
       buttons: (<>
-        <button onClick={()=>{writeNextStage(5)}} className={styles.processBtn}>终止任务</button>
-        <button onClick={()=>{writeNextStage(3)}} className={styles.processBtn}>开始进行</button>
+        <button onClick={() => {
+          writeNextStage(5)
+        }} className={styles.processBtn}>终止任务
+        </button>
+        <button onClick={() => {
+          writeNextStage(3)
+        }} className={styles.processBtn}>开始进行
+        </button>
       </>)
     },
     3: {
       name: '进行中',
       buttons: (<>
-        <button onClick={()=>{writeNextStage(5)}} className={styles.processBtn}>终止任务</button>
-        <button onClick={()=>{writeNextStage(4)}} className={styles.processBtn}>暂停任务</button>
-        <button onClick={()=>{writeNextStage(6)}} className={styles.processBtn}>完成任务</button>
+        <button onClick={() => {
+          writeNextStage(5)
+        }} className={styles.processBtn}>终止任务
+        </button>
+        <button onClick={() => {
+          writeNextStage(4)
+        }} className={styles.processBtn}>暂停任务
+        </button>
+        <button onClick={() => {
+          writeNextStage(6)
+        }} className={styles.processBtn}>完成任务
+        </button>
       </>)
     },
     4: {
       name: '暂停中',
       buttons: (<>
-        <button onClick={()=>{writeNextStage(5)}} className={styles.processBtn}>终止任务</button>
-        <button onClick={()=>{writeNextStage(3)}} className={styles.processBtn}>继续进行</button>
+        <button onClick={() => {
+          writeNextStage(5)
+        }} className={styles.processBtn}>终止任务
+        </button>
+        <button onClick={() => {
+          writeNextStage(3)
+        }} className={styles.processBtn}>继续进行
+        </button>
       </>)
     },
     5: {
@@ -75,13 +116,16 @@ const ServerItemInfo = (props) => {
     6: {
       name: '已完成',
       buttons: (<>
-        <button onClick={()=>{console.log('点击评价功能')}} className={styles.processBtn}>评价</button>
+        <button onClick={evaluation} className={styles.processBtn}>评价</button>
       </>)
     },
     7: {
       name: '已评价',
       buttons: (<>
-        <button onClick={()=>{console.log('查看评价详情')}} className={styles.processBtn}>查看评价详情</button>
+        <button onClick={() => {
+          console.log('查看评价详情')
+        }} className={styles.processBtn}>查看评价详情
+        </button>
       </>)
     },
   }
@@ -98,17 +142,28 @@ const ServerItemInfo = (props) => {
     return false;
   }
 
+
   return (
     <div className={styles.serverItemInfoContainer}>
-      <div className={styles.stepBox}>步骤条</div>
+      <div className={styles.stepContainer}>
+        <div className={styles.stepBox}>
+          <Steps current={stepsCurrent} direction="horizontal" size="small">
+            {
+              steps.map((s, i) =>
+                <Step key={i} title={s.title} description=''/>)
+            }
+          </Steps>
+        </div>
+      </div>
+
       <ul className={styles.ulContainer}>
         {
-          stageData && stageData.map((item) => {
+          order_stage && order_stage.map((item, index) => {
             return (<li className={styles.liContainer} key={item.id}>
               {
                 nowStage > item.stage ?
                   (<div>流程: {stateToComponent[item.stage].name}</div>)
-                  :(<div>当前流程: {stateToComponent[item.stage].name}</div>)
+                  : (<div>当前流程: {stateToComponent[item.stage].name}</div>)
               }
 
               <div>时间:{timeTransToFrontend(item.create_time)}</div>
@@ -117,7 +172,9 @@ const ServerItemInfo = (props) => {
                 // 最后一个阶段才会显示按钮
                 // 同时会区分住户能看到哪些
                 // 员工能看到哪些
-                (nowStage === item.stage && showBtnGroup) &&
+                (nowStage === item.stage &&
+                  index === 0 &&
+                  showBtnGroup) &&
                 <div className={styles.btnGroup}>
                   {stateToComponent[item.stage].buttons}
                 </div>
@@ -127,14 +184,18 @@ const ServerItemInfo = (props) => {
           })
         }
         <li className={styles.liContainer}>
-          <div>总的服务详情</div>
-          <div>总的服务详情</div>
-          <div>总的服务详情</div>
-          <div>总的服务详情</div>
-          <div>总的服务详情</div>
-          <div>总的服务详情</div>
+          <div className={styles.title}>工单详情</div>
+          <div>服务工单编号：{currentOrder.id}</div>
+          <div>住户：{currentOrder.household_name}</div>
+          <div>员工：{currentOrder.employee_name}</div>
+          <div>工单类型：{currentOrder.type && typeTransToFrontend(currentOrder.type)}({currentOrder.emergency === 1 ? '不紧急' : '紧急'})</div>
         </li>
-
+        <Button
+          className={styles.return}
+          onClick={() => {
+            props.dispatch(routerRedux.push('/server'))
+          }}
+        >回到服务页</Button>
       </ul>
     </div>
   )
@@ -143,6 +204,7 @@ const ServerItemInfo = (props) => {
 const mapStateToProps = (state) => {
   return {
     userType: state.user.userType,
+    currentOrder: state.order.currentOrder,
   }
 }
 

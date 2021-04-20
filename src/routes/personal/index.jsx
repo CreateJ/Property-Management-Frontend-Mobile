@@ -1,14 +1,15 @@
 import React, {useEffect} from 'react'
 import {routerRedux} from "dva/router";
 import {connect} from "dva";
-import {Button, Modal, Toast, WingBlank} from "antd-mobile";
-import {changePassWord} from "../../services/user";
+import {Button, List, Modal, Toast, WingBlank} from "antd-mobile";
+import {changePassWord, feedBack} from "../../services/user";
 import Cookies from 'js-cookie'
 import styles from './personal.less'
 import user from "../../models/user";
 import {sexTransToFrontend, skillListToFrontend, timeTransToFrontend} from "../../utils/transformUtils";
 
 const prompt = Modal.prompt;
+const Item = List.Item;
 
 const Personal = (props) => {
   const {dispatch} = props;
@@ -29,15 +30,22 @@ const Personal = (props) => {
 
   // 修改密码模态框提交
   const modifyPasswordSubmit = async (pw) => {
-    console.log(pw)
     const success = await changePassWord({password: pw + ''})
-    console.log(success)
     if (success.code === 200) {
       Toast.success('修改密码成功，即将跳转到登录页面，请重新登录！', 2, () => {
         logOut();
       })
     }
   }
+
+  const submitFeedBack = async (text) => {
+    const success = await feedBack({ content: text })
+    console.log(success)
+    if (success.code === 200) {
+      Toast.success('提交反馈成功', 2, )
+    }
+  }
+
   const sexMap = ['', '男', '女']
   const userTypeMap = ['', '住户', '物业员工']
   const stateMap = ['', '休息中', '上班中']
@@ -53,7 +61,6 @@ const Personal = (props) => {
         </div>
         <div className={styles.otherInfo}>
           {`身份证：${(userData.id_code + '').slice(0, 4)}**********${(userData.id_code + '').slice(14, 18)}`}
-          {/*{`身份证：${userData.id_code}`}*/}
         </div>
         <div className={styles.otherInfo}>
           {`微信号：${userData.wechat}`}
@@ -82,23 +89,41 @@ const Personal = (props) => {
 
       </div>
 
-      <WingBlank size={"sm"}>
-        <Button
-          onClick={() => prompt(
+      <List>
+        <Item arrow="horizontal" onClick={
+          () => prompt(
             '修改密码',
-            'You can custom buttons',
+            '请输入六位以上的密码',
             [
               {text: '取消'},
               {text: '提交', onPress: password => modifyPasswordSubmit(password)},
             ],
             'secure-text',
-          )
-          }
-          className={styles.resetPw}
-        >
+          )}>
           修改密码
-        </Button>
-        <Button onClick={logOut} type='warning'>退出登录</Button>
+        </Item>
+        <Item arrow="horizontal" onClick={
+          () => prompt(
+            '填写反馈',
+            '我们会认真听取您的意见',
+            [
+              {text: '取消'},
+              {text: '提交', onPress: text => submitFeedBack(text)},
+            ],
+            'text',
+          )}>
+          填写反馈
+        </Item>
+      </List>
+
+      <WingBlank size={"sm"}>
+        {/*<Button*/}
+        {/*  onClick={}*/}
+        {/*  className={styles.resetPw}*/}
+        {/*>*/}
+        {/*  修改密码*/}
+        {/*</Button>*/}
+        <Button style={{marginTop:'1rem'}} onClick={logOut} type='warning'>退出登录</Button>
       </WingBlank>
 
     </div>
