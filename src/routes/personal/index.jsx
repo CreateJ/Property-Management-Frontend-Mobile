@@ -5,8 +5,7 @@ import {Button, List, Modal, Toast, WingBlank} from "antd-mobile";
 import {changePassWord, feedBack} from "../../services/user";
 import Cookies from 'js-cookie'
 import styles from './personal.less'
-import user from "../../models/user";
-import {sexTransToFrontend, skillListToFrontend, timeTransToFrontend} from "../../utils/transformUtils";
+import {skillListToFrontend, timeTransToFrontend} from "../../utils/transformUtils";
 
 const prompt = Modal.prompt;
 const Item = List.Item;

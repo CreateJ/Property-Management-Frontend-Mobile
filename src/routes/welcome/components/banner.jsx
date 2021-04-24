@@ -1,4 +1,4 @@
-import {Carousel, WingBlank} from 'antd-mobile';
+import {Carousel} from 'antd-mobile';
 import React from 'react'
 
 class Banner extends React.Component {
@@ -33,7 +33,7 @@ class Banner extends React.Component {
             <img
               src={require(`../../../assets/banner${val}.png`)}
               alt=""
-              style={{width: '100%', verticalAlign: 'top'}}
+              style={{width: '100%', verticalAlign: 'top', height: '100%'}}
               onLoad={() => {
                 // fire window resize event to change height
                 window.dispatchEvent(new Event('resize'));

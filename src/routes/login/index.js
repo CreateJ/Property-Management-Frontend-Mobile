@@ -28,14 +28,26 @@ const Login = (props) => {
     }
     const params = {phone: id,password: pw,user_type: parseInt(ut, 0)}
     const success = await login(params)
+    console.log(success)
     if(success.code === 200){
-      Toast.success(`登录成功,当前身份为${utMap[ut]}`,1,()=>{
-        cookieUtil.setCookie('userType',ut);
-        // 同步到redux中
-        props.dispatch({type:'user/setUserType', userType: ut})
-        props.dispatch({type:'user/setIsLogin', isLogin: true})
-        props.dispatch(routerRedux.push('/welcome'))
-      })
+      if(success.data.default_password){
+        Toast.success(`登录成功,当前身份为${utMap[ut]},由于您使用默认密码，将为您跳转到个人页，请为了安全修改密码`,1,()=>{
+          cookieUtil.setCookie('userType',ut);
+          // 同步到redux中
+          props.dispatch({type:'user/setUserType', userType: ut})
+          props.dispatch({type:'user/setIsLogin', isLogin: true})
+          props.dispatch(routerRedux.push('/personal'))
+        })
+      }else {
+        Toast.success(`登录成功,当前身份为${utMap[ut]}`,1,()=>{
+          cookieUtil.setCookie('userType',ut);
+          // 同步到redux中
+          props.dispatch({type:'user/setUserType', userType: ut})
+          props.dispatch({type:'user/setIsLogin', isLogin: true})
+          props.dispatch(routerRedux.push('/welcome'))
+        })
+      }
+
     }else{
       Toast.fail('登录失败，请检查账号密码是否正确')
     }

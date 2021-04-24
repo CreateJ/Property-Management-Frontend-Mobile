@@ -3,7 +3,7 @@ import {connect} from "dva";
 import {createForm} from "rc-form";
 import {Button, Card, Flex, Picker, List, TextareaItem, Toast, WhiteSpace, WingBlank} from "antd-mobile";
 import {routerRedux} from "dva/router";
-import {changeOrderStage, evaluation} from "../../../services/order";
+import {evaluation} from "../../../services/order";
 import styles from "../server.less";
 import {typeTransToFrontend} from "../../../utils/transformUtils";
 
@@ -44,7 +44,7 @@ const Evaluation = (props) => {
 
     const params = {
       note: form.getFieldValue('note'),
-      order_id: parseInt(orderId),
+      order_id: parseInt(orderId, 10),
       level: form.getFieldValue('level')[0],
       timely_score: form.getFieldValue('timely_score')[0],
     }

@@ -41,3 +41,4 @@ export function getSteps(num){
     case 7 : return [stepsMap[3],stepsMap[6],stepsMap[7]];
   }
 }
+

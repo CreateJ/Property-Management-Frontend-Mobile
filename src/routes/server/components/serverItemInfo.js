@@ -3,7 +3,7 @@ import {connect} from "dva";
 import styles from '../server.less'
 import {routerRedux} from "dva/router";
 import {timeTransToFrontend, typeTransToFrontend} from "../../../utils/transformUtils";
-import {Button, Steps, WhiteSpace} from "antd-mobile";
+import {Button, Steps} from "antd-mobile";
 import {getSteps} from "../../../Map/stepsMap";
 
 const Step = Steps.Step;
@@ -26,6 +26,7 @@ const ServerItemInfo = (props) => {
 
   // 让程序自动运行即可
   useEffect(() => {
+    console.log('effect button')
     setNowStage(currentOrder.stage)
     setShowBtnGroup(shouldShowBtnGroup(props.userType, nowStage))
   })
@@ -41,7 +42,6 @@ const ServerItemInfo = (props) => {
       for (let i = 0; i < 3; i++) {
         if (steps[i].id === currentOrder.stage) {
           setStepsCurrent(i);
-          console.log(i, 'iiiiiiiiiiiiiiiiiiiiiiii')
         }
       }
     }
@@ -136,7 +136,7 @@ const ServerItemInfo = (props) => {
     if (userType === 1 && maxStage >= 6) {
       return true;
     }
-    if (userType === 2 && maxStage >= 1 && maxStage <= 5) {
+    if (userType === (2+'') && maxStage >= 1 && maxStage <= 5) {
       return true;
     }
     return false;
